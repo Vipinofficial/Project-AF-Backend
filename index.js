@@ -6,7 +6,21 @@ const db = require('./db');
 const app = express();
 const PORT = env.PORT;
 
-app.use(cors());
+// An open CORS policy is fine on localhost and reckless in production: it lets
+// any site on the internet call this API with a user's credentials. In
+// production an explicit allowlist is required, and boot fails without one
+// rather than silently falling back to open.
+if (env.IS_PRODUCTION) {
+  if (env.CORS_ORIGINS.length === 0) {
+    throw new Error(
+      'CORS_ORIGINS must list the allowed origins in production, ' +
+      'e.g. https://arli.in,https://business.arli.in'
+    );
+  }
+  app.use(cors({ origin: env.CORS_ORIGINS, credentials: true }));
+} else {
+  app.use(cors());
+}
 app.use(express.json());
 
 // Basic health check endpoint
@@ -191,6 +205,9 @@ app.post('/api/auth/demo-login', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`ARLI Backend running on port ${PORT} with Supabase PostgreSQL integration`);
+app.listen(PORT, env.HOST, () => {
+  console.log(`ARLI API listening on ${env.HOST}:${PORT} (${env.NODE_ENV})`);
+  if (env.IS_PRODUCTION) {
+    console.log(`CORS allowlist: ${env.CORS_ORIGINS.join(', ')}`);
+  }
 });

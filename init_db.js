@@ -1,4 +1,15 @@
 const db = require('./db');
+const env = require('./config/env');
+
+// This script TRUNCATEs every table. That is fine for seeding a dev database
+// and catastrophic against a live one, so production needs an explicit opt-in.
+if (env.IS_PRODUCTION && process.argv[2] !== '--yes-wipe-production') {
+  console.error(
+    'Refusing to run: init_db.js truncates users, listings and orders. ' +
+    'NODE_ENV is production. Re-run with --yes-wipe-production if you really mean it.'
+  );
+  process.exit(1);
+}
 
 async function initDB() {
   console.log('🚀 Starting Supabase PostgreSQL Database Initialization & Seeding...');

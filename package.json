@@ -4,12 +4,16 @@
   "description": "Backend API for ARLI Fashion Marketplace India",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "seed": "node init_db.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
     "pg": "^8.22.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
