@@ -7,18 +7,21 @@ const app = express();
 const PORT = env.PORT;
 
 // An open CORS policy is fine on localhost and reckless in production: it lets
-// any site on the internet call this API with a user's credentials. In
-// production an explicit allowlist is required, and boot fails without one
-// rather than silently falling back to open.
-if (env.IS_PRODUCTION) {
-  if (env.CORS_ORIGINS.length === 0) {
-    throw new Error(
-      'CORS_ORIGINS must list the allowed origins in production, ' +
-      'e.g. https://arli.in,https://business.arli.in'
-    );
-  }
+// any site on the internet call this API with a user's credentials.
+//
+// When CORS_ORIGINS is set we enforce it. When it is missing in production we
+// warn loudly but still start, because refusing to boot would take a running
+// service down over a config gap - and open CORS is what this API already did,
+// so starting is no worse than the status quo. Set CORS_ORIGINS to close it.
+if (env.CORS_ORIGINS.length > 0) {
   app.use(cors({ origin: env.CORS_ORIGINS, credentials: true }));
 } else {
+  if (env.IS_PRODUCTION) {
+    console.warn(
+      '[SECURITY] CORS_ORIGINS is not set, so this API accepts requests from ANY origin. ' +
+      'Set it to your frontend origins, e.g. https://arli.in,https://business.arli.in'
+    );
+  }
   app.use(cors());
 }
 app.use(express.json());

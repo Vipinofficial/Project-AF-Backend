@@ -19,7 +19,7 @@ your git history can reach the database of. Rotate first.
 | Variable | Required | Notes |
 |---|---|---|
 | `DATABASE_URL` | yes | Supabase → Settings → Database → Connection string → URI. Boot fails without it. |
-| `CORS_ORIGINS` | in production | Comma-separated origins allowed to call the API. Boot fails without it when `NODE_ENV=production`. |
+| `CORS_ORIGINS` | strongly advised | Comma-separated origins allowed to call the API. Without it the API accepts **any** origin and logs a `[SECURITY]` warning on boot. |
 | `PORT` | no | Defaults to 5000. Most hosts set this for you. |
 | `HOST` | no | Defaults to `0.0.0.0`, which containers need. |
 | `NODE_ENV` | no | `production` turns on the CORS allowlist and the seed guard. |
@@ -62,9 +62,11 @@ API *and* its connection are up.
 
 ## Three guards, and why
 
-**Production refuses to boot without `CORS_ORIGINS`.** An open CORS policy lets
-any site on the internet call this API with a user's credentials. Falling back
-to open would have been the dangerous default, so it fails loudly instead.
+**A missing `CORS_ORIGINS` in production logs a `[SECURITY]` warning.** An open
+CORS policy lets any site on the internet call this API with a user's
+credentials. The API still starts, because refusing to boot would take a running
+service down over a config gap — and open CORS is what it already did, so
+starting is no worse than the status quo. Set `CORS_ORIGINS` to close it.
 
 **`init_db.js` refuses to run when `NODE_ENV=production`.** It `TRUNCATE`s
 users, listings and orders. Override with `--yes-wipe-production` only if you
