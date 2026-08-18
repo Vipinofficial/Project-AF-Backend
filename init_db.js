@@ -32,6 +32,8 @@ async function initDB() {
         reviews INTEGER DEFAULT 12,
         pincode VARCHAR(10) NOT NULL,
         measurable BOOLEAN DEFAULT false,
+        lat NUMERIC(9,6),
+        lng NUMERIC(9,6),
         name JSONB NOT NULL,
         shop JSONB NOT NULL,
         desc_text JSONB NOT NULL,
@@ -78,28 +80,28 @@ async function initDB() {
     // 5. Seed Real Products & Services
     console.log('🌱 Seeding real products and custom tailoring services into Supabase Postgres...');
     await db.query(`
-      INSERT INTO listings (cat, price, base, acc, img, sponsored, rating, reviews, pincode, measurable, name, shop, desc_text) VALUES
+      INSERT INTO listings (cat, price, base, acc, img, sponsored, rating, reviews, pincode, measurable, lat, lng, name, shop, desc_text) VALUES
       (
-        'service', 350.00, '#7A2E4D', '#E9A23B', '/stock_kurta.png', true, '4.8', 14, '221001', true,
+        'service', 350.00, '#7A2E4D', '#E9A23B', '/stock_kurta.png', true, '4.8', 14, '221001', true, 25.317600, 82.973900,
         '{"en": "Kurta Custom Tailor Stitching", "hi": "कुर्ता कस्टम सिलाई"}',
         '{"en": "Varanasi Vastra Bhandar", "hi": "बनारस वस्त्र भंडार"}',
         '{"en": "Traditional Banarasi style bespoke tailor stitching for men & women.", "hi": "पारंपरिक बनारसी शैली कस्टम सिलाई।"}'
       ),
       (
-        'fabric', 450.00, '#2A3B66', '#C2492F', '/stock_banarasi.png', true, '4.9', 28, '221001', false,
+        'fabric', 450.00, '#2A3B66', '#C2492F', '/stock_banarasi.png', true, '4.9', 28, '221001', false, 25.309900, 82.986500,
         '{"en": "Banarasi Gold Zari Silk Fabric", "hi": "बनारसी जरी सिल्क कपड़ा"}',
         '{"en": "Meera Fabrics & Textiles", "hi": "मीरा फैब्रिक्स"}'
         ,
         '{"en": "Authentic Banarasi woven silk cloth with intricate golden floral motifs.", "hi": "प्रामाणिक बनारसी जरी सिल्क कपड़ा।"}'
       ),
       (
-        'garment', 2890.00, '#7A1C28', '#D4AF37', '/stock_anarkali.png', false, '4.9', 35, '302001', true,
+        'garment', 2890.00, '#7A1C28', '#D4AF37', '/stock_anarkali.png', false, '4.9', 35, '302001', true, 26.912400, 75.787300,
         '{"en": "Royal Maroon Anarkali Suit", "hi": "रॉयल अनारकली सूट"}',
         '{"en": "Jaipur Heritage Boutique", "hi": "जयपुर हेरिटेज बुटीक"}',
         '{"en": "Hand-embroidered heavy zardozi Anarkali suit set with matching dupatta.", "hi": "हाथ से कढ़ाई किया हुआ भारी अनारकली सूट।"}'
       ),
       (
-        'service', 1200.00, '#39597B', '#48688A', '/stock_kurta.png', false, '4.7', 19, '110001', true,
+        'service', 1200.00, '#39597B', '#48688A', '/stock_kurta.png', false, '4.7', 19, '110001', true, 28.630400, 77.217700,
         '{"en": "Indo-Western Sherwani Stitching", "hi": "इंडो-वेस्टर्न शेरवानी सिलाई"}',
         '{"en": "Royal Cut Tailors", "hi": "रॉयल कट टेलर्स"}',
         '{"en": "Bespoke fitting and doorstep measurement for groom sherwanis.", "hi": "दूल्हे की शेरवानी के लिए बेस्पोक फिटिंग।"}'

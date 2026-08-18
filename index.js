@@ -40,6 +40,8 @@ app.get('/api/listings', async (req, res) => {
       reviews: row.reviews,
       pincode: row.pincode,
       measurable: row.measurable,
+      lat: row.lat === null ? undefined : Number(row.lat),
+      lng: row.lng === null ? undefined : Number(row.lng),
       name: row.name,
       shop: row.shop,
       desc: row.desc_text,
@@ -54,10 +56,10 @@ app.get('/api/listings', async (req, res) => {
 // POST /api/listings - Create new listing in Supabase Postgres
 app.post('/api/listings', async (req, res) => {
   try {
-    const { cat, price, base, acc, img, sponsored, rating, reviews, pincode, measurable, name, shop, desc } = req.body;
+    const { cat, price, base, acc, img, sponsored, rating, reviews, pincode, measurable, lat, lng, name, shop, desc } = req.body;
     const result = await db.query(
-      `INSERT INTO listings (cat, price, base, acc, img, sponsored, rating, reviews, pincode, measurable, name, shop, desc_text)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      `INSERT INTO listings (cat, price, base, acc, img, sponsored, rating, reviews, pincode, measurable, lat, lng, name, shop, desc_text)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
        RETURNING *`,
       [
         cat || 'fabric',
@@ -70,6 +72,8 @@ app.post('/api/listings', async (req, res) => {
         reviews || 0,
         pincode || '221001',
         measurable || false,
+        lat ?? null,
+        lng ?? null,
         JSON.stringify(name || { en: 'New Item', hi: 'नया आइटम' }),
         JSON.stringify(shop || { en: 'Local Merchant', hi: 'स्थानीय व्यापारी' }),
         JSON.stringify(desc || { en: 'Product description', hi: 'उत्पाद विवरण' }),
@@ -89,6 +93,8 @@ app.post('/api/listings', async (req, res) => {
       reviews: row.reviews,
       pincode: row.pincode,
       measurable: row.measurable,
+      lat: row.lat === null ? undefined : Number(row.lat),
+      lng: row.lng === null ? undefined : Number(row.lng),
       name: row.name,
       shop: row.shop,
       desc: row.desc_text,
